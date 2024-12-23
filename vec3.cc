@@ -64,8 +64,35 @@ double Vec3::length_squared() const {
     return data[0] * data[0] + data[1] * data[1] + data[2] * data[2];
 }
 
-Vec3 Vec3::unit() const {
-    return Vec3(*this) / length();
+Vec3 Vec3::unit_vector() const {
+    return *this / length();
+}
+
+bool Vec3::near_zero() const {
+    double lower_limit = 1e-8;
+    return (fabs(data[0]) < lower_limit) && (fabs(data[1]) < lower_limit) && (fabs(data[2]) < lower_limit);
+}
+
+Vec3 Vec3::random() {
+    return Vec3{random_double(), random_double(), random_double()};
+}
+
+Vec3 Vec3::random(double min, double max) {
+    return Vec3{random_double(min, max), random_double(min, max), random_double(min, max)};
+}
+
+Vec3 Vec3::random_unit_vector() {
+    while (true) {
+        Vec3 v = random(-1, 1);
+        double lensq = v.length_squared();
+        if (1e-160 < lensq && lensq <= 1) return v / sqrt(lensq);
+    }
+}
+
+Vec3 Vec3::random_on_hemisphere(const Vec3 &normal) {
+    Vec3 v = random_unit_vector();
+    if (dot(normal, v) >= 0) return v;
+    else return -v;
 }
 
 ostream &operator<<(ostream &out, const Vec3 &v) {
@@ -91,4 +118,8 @@ Vec3 cross(const Vec3 &u, const Vec3 &v) {
         u[2] * v[0] - u[0] * v[2],
         u[0] * v[1] - u[1] * v[0]
     };
+}
+
+Vec3 reflect(const Vec3 &in, const Vec3 &normal) {
+    return in - 2 * dot(in, normal) * normal;
 }

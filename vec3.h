@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iostream>
+#include "utility.h"
 
 class Vec3 {
     double data[3];
@@ -26,7 +27,12 @@ class Vec3 {
     Vec3 &operator/=(double d);
     double length() const;
     double length_squared() const;
-    Vec3 unit() const;
+    Vec3 unit_vector() const;
+    bool near_zero() const;
+    static Vec3 random();
+    static Vec3 random(double min, double max);
+    static Vec3 random_unit_vector();
+    static Vec3 random_on_hemisphere(const Vec3 &normal);
 };
 
 using Point3 = Vec3;
@@ -36,5 +42,6 @@ Vec3 operator*(const Vec3 &v, double d);
 Vec3 operator*(double d, const Vec3 &v);
 double dot(const Vec3 &u, const Vec3 &v);
 Vec3 cross(const Vec3 &u, const Vec3 &v);
+Vec3 reflect(const Vec3 &in, const Vec3 &normal);
 
 #endif

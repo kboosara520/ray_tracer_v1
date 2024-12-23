@@ -16,7 +16,7 @@ run: $(EXEC)
 	./$(EXEC) > $(IMAGE) 2> $(LOG)
 	open $(IMAGE)
 
-checkLeak: $(EXEC)
+checkLeaks: $(EXEC)
 	leaks -atExit -- ./a.out
 
 %.o: %.cc $(HEADERS)

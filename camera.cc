@@ -25,7 +25,7 @@ void Camera::render(const World &world) {
         for (int i = 0; i < image_width; ++i) {
             Vec3 total_c = Vec3{0, 0, 0};
             for (int k = 0; k < samples_per_pixel; ++k) {
-                total_c += ray_color(get_ray(i, j), world);
+                total_c += ray_color(get_ray(i, j), world, max_dept);
             }
             cout << Color{total_c / samples_per_pixel} << endl;
         }
@@ -33,13 +33,18 @@ void Camera::render(const World &world) {
     clog << "Done" << endl;
 }
 
-Color Camera::ray_color(const Ray &r, const World &world) {
+Color Camera::ray_color(const Ray &r, const World &world, const int max_dept) {
+    if (max_dept <= 0) return Color{0, 0, 0};
     hit_record hrec;
-    bool did_hit = world.hit(r, Interval{0, infinity}, hrec);
-    if (did_hit) {
-        return unit2Color(hrec.normal);
+    if (world.hit(r, Interval{0.001, infinity}, hrec)) {
+        Ray scattered;
+        Color attenuation;
+        if (hrec.mat->scatter(r, hrec, attenuation, scattered)) {
+            return attenuation * ray_color(scattered, world, max_dept - 1);
+        }
+        return Color{0, 0, 0};
     }
-    Vec3 unit_dir = r.getDirection().unit();
+    Vec3 unit_dir = r.getDirection().unit_vector();
     double a = 0.5 * (unit_dir.y() + 1);
     return (1.0 - a) * Color{1.0, 1.0, 1.0} + a * Color{0.5, 0.7, 1.0};
 }
