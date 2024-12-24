@@ -43,5 +43,6 @@ Vec3 operator*(double d, const Vec3 &v);
 double dot(const Vec3 &u, const Vec3 &v);
 Vec3 cross(const Vec3 &u, const Vec3 &v);
 Vec3 reflect(const Vec3 &in, const Vec3 &normal);
+Vec3 refract(const Vec3 &in, const Vec3 &normal, double etai_over_etat);
 
 #endif

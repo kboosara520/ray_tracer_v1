@@ -123,3 +123,10 @@ Vec3 cross(const Vec3 &u, const Vec3 &v) {
 Vec3 reflect(const Vec3 &in, const Vec3 &normal) {
     return in - 2 * dot(in, normal) * normal;
 }
+
+Vec3 refract(const Vec3 &in, const Vec3 &normal, double etai_over_etat) {
+    double cos_theta = fmin(dot(-in, normal), 1.0);
+    Vec3 out_perp = etai_over_etat * (in + cos_theta * normal);
+    Vec3 out_parallel = -sqrt(fabs(1 - out_perp.length_squared())) * normal;
+    return out_perp + out_parallel;
+}
