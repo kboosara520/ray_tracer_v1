@@ -1,4 +1,5 @@
 #include <memory>
+#include <cmath>
 #include "utility.h"
 #include "vec3.h"
 #include "color.h"
@@ -17,16 +18,26 @@ using namespace std;
 int main() {
     const int IMAGE_WIDTH = 400;
     const double ASPECT_RATIO = 16.0 / 9.0;
+    Vec3 look_from{-2, 2, 1};
+    Vec3 look_at{0, 0, -1};
+    Vec3 v_up{0, 1, 0};
+    double v_fov = 20;
 
-    Camera cam{IMAGE_WIDTH, ASPECT_RATIO};
+    Camera cam{IMAGE_WIDTH, ASPECT_RATIO, look_from, look_at, v_up, v_fov};
 
     World world;
+    
+    // double r = cos(pi / 4);
+    // auto red = make_shared<Lambertian>(Color{1, 0, 0});
+    // auto blue = make_shared<Lambertian>(Color{0, 0, 1});
     auto material_ground = make_shared<Lambertian>(Color{0.8, 0.8, 0.0});
     auto material_center = make_shared<Lambertian>(Color{0.1, 0.2, 0.5});
     auto material_left   = make_shared<Dielectric>(1.5);
     auto material_bubble = make_shared<Dielectric>(1.0 / 1.5);
-    auto material_right  = make_shared<Metal>(Color{0.8, 0.6, 0.2}, 0.5);
+    auto material_right  = make_shared<Metal>(Color{0.8, 0.6, 0.2}, 0.2);
 
+    // world.add(make_unique<Sphere>(Point3{-r, 0, -1}, r, blue));
+    // world.add(make_unique<Sphere>(Point3{r, 0, -1}, r, red));
     world.add(make_unique<Sphere>(Point3{0, -100.5, -1}, 100, material_ground));
     world.add(make_unique<Sphere>(Point3{0, 0, -1.2}, 0.5, material_center));
     world.add(make_unique<Sphere>(Point3{-1, 0, -1}, 0.5, material_left));

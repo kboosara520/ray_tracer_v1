@@ -1,18 +1,28 @@
 #include "camera.h"
 
-Camera::Camera(int image_width, double aspect_ratio, double focal_length, double viewport_height): image_width{image_width}, image_height{static_cast<int>(image_width / aspect_ratio)} {
+Camera::Camera(int image_width, double aspect_ratio, Vec3 look_from, Vec3 look_at, Vec3 v_up, double v_fov): 
+    image_width{image_width}, 
+    image_height{static_cast<int>(image_width / aspect_ratio)}, 
+    camera_center{look_from},
+    w{(look_from - look_at).unit_vector()},
+    u{(cross(v_up, w)).unit_vector()},
+    v{cross(w, u)}
+    {
     image_height = (image_height < 1) ? 1 : image_height;
+    double theta = deg2rad(v_fov);
+    double h = tan(theta / 2);
+    double focal_length = (look_from - look_at).length();
+    double viewport_height = 2 * h * focal_length;
     double viewport_width = viewport_height 
                             * (static_cast<double>(image_width)/image_height);
 
-    Vec3 viewport_u = Vec3{viewport_width, 0, 0};
-    Vec3 viewport_v = Vec3{0, -viewport_height, 0};
+    Vec3 viewport_u = viewport_width * u;
+    Vec3 viewport_v = viewport_height * -v;
 
     pixel_delta_u = viewport_u / image_width;
     pixel_delta_v = viewport_v / image_height;
-
     Point3 viewport_upper_left = camera_center 
-                                 - Vec3{0, 0, focal_length} 
+                                 - (focal_length * w) 
                                  - viewport_u / 2 
                                  - viewport_v / 2;
     pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
