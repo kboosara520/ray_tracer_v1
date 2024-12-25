@@ -89,10 +89,17 @@ Vec3 Vec3::random_unit_vector() {
     }
 }
 
-Vec3 Vec3::random_on_hemisphere(const Vec3 &normal) {
-    Vec3 v = random_unit_vector();
-    if (dot(normal, v) >= 0) return v;
-    else return -v;
+// Vec3 Vec3::random_on_hemisphere(const Vec3 &normal) {
+//     Vec3 v = random_unit_vector();
+//     if (dot(normal, v) >= 0) return v;
+//     else return -v;
+// }
+
+Vec3 Vec3::random_in_unit_disk() {
+    while (true) {
+        Vec3 v{random_double(-1, 1), random_double(-1, 1), 0};
+        if (v.length_squared() < 1) return v;
+    }
 }
 
 ostream &operator<<(ostream &out, const Vec3 &v) {

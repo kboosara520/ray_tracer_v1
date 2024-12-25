@@ -9,5 +9,3 @@ bool Lambertian::scatter(const Ray &in, const hit_record &hrec, Color &attenuati
     attenuation = albedo;
     return true;
 }
-
-

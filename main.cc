@@ -1,5 +1,7 @@
+#include <iostream>
 #include <memory>
 #include <cmath>
+#include <chrono>
 #include "utility.h"
 #include "vec3.h"
 #include "color.h"
@@ -16,33 +18,71 @@
 using namespace std;
 
 int main() {
-    const int IMAGE_WIDTH = 400;
+    auto init = chrono::high_resolution_clock::now();
+    World world;
+    auto ground_material = make_shared<Lambertian>(Color{0.5, 0.5, 0.5});
+    world.add(make_unique<Sphere>(Vec3{0, -1000, 0}, 1000, ground_material));
+    for (int a = -11; a < 11; ++a) {
+        for (int b = -11; b < 11; ++b) {
+            double choose_mat = random_double();
+            Point3 center{a + 0.9 * random_double(), 0.2, b + 0.9 * random_double()};
+            if ((center - Point3{4, 0, 0}).length() > 0.9) {
+                if (choose_mat < 0.78) {
+                    Color albedo = Color::random() * Color::random();
+                    auto mat = make_shared<Lambertian>(albedo);
+                    world.add(make_unique<Sphere>(center, 0.2, mat));
+                }
+                else if (choose_mat < 0.92) {
+                    Color albedo = Color::random(0.5, 1);
+                    double fuzz = 0.3;
+                    auto mat = make_shared<Metal>(albedo, fuzz);
+                    world.add(make_unique<Sphere>(center, 0.2, mat));
+                }
+                else {
+                    auto mat = make_shared<Dielectric>(1.5);
+                    world.add(make_unique<Sphere>(center, 0.2, mat));
+                }
+            }
+        }
+    }
+
+    auto material1 = make_shared<Dielectric>(1.5);
+    world.add(make_unique<Sphere>(Point3{0, 1, 0}, 1.0, material1));
+
+    auto material2 = make_shared<Lambertian>(Color{0.4, 0.2, 0.1});
+    world.add(make_unique<Sphere>(Point3{-4, 1, 0}, 1.0, material2));
+
+    auto material3 = make_shared<Metal>(Color{0.7, 0.6, 0.5}, 0.0);
+    world.add(make_unique<Sphere>(Point3{4, 1, 0}, 1.0, material3));
+
+    const int IMAGE_WIDTH = 1280;
     const double ASPECT_RATIO = 16.0 / 9.0;
-    Vec3 look_from{-2, 2, 1};
-    Vec3 look_at{0, 0, -1};
+    int samples_per_pixel = 500;
+    double defocus_angle = 0.6;
+    double focus_dist = 10;
+    Vec3 look_from{13, 2, 3};
+    Vec3 look_at{0, 0, 0};
     Vec3 v_up{0, 1, 0};
     double v_fov = 20;
 
-    Camera cam{IMAGE_WIDTH, ASPECT_RATIO, look_from, look_at, v_up, v_fov};
-
-    World world;
-    
-    // double r = cos(pi / 4);
-    // auto red = make_shared<Lambertian>(Color{1, 0, 0});
-    // auto blue = make_shared<Lambertian>(Color{0, 0, 1});
-    auto material_ground = make_shared<Lambertian>(Color{0.8, 0.8, 0.0});
-    auto material_center = make_shared<Lambertian>(Color{0.1, 0.2, 0.5});
-    auto material_left   = make_shared<Dielectric>(1.5);
-    auto material_bubble = make_shared<Dielectric>(1.0 / 1.5);
-    auto material_right  = make_shared<Metal>(Color{0.8, 0.6, 0.2}, 0.2);
-
-    // world.add(make_unique<Sphere>(Point3{-r, 0, -1}, r, blue));
-    // world.add(make_unique<Sphere>(Point3{r, 0, -1}, r, red));
-    world.add(make_unique<Sphere>(Point3{0, -100.5, -1}, 100, material_ground));
-    world.add(make_unique<Sphere>(Point3{0, 0, -1.2}, 0.5, material_center));
-    world.add(make_unique<Sphere>(Point3{-1, 0, -1}, 0.5, material_left));
-    world.add(make_unique<Sphere>(Point3{-1, 0, -1}, 0.4, material_bubble));
-    world.add(make_unique<Sphere>(Point3{1, 0, -1}, 0.5, material_right));
-
+    CameraInfo init_info{
+        IMAGE_WIDTH, ASPECT_RATIO, 
+        samples_per_pixel, 
+        defocus_angle, 
+        focus_dist, 
+        look_from, 
+        look_at, 
+        v_up, 
+        v_fov
+    };
+    Camera cam{init_info};
+    auto render_start = chrono::high_resolution_clock::now();
     cam.render(world);
+    auto render_end = chrono::high_resolution_clock::now();
+    auto init_time = chrono::duration_cast<chrono::seconds>(render_start - init);
+    auto render_time = chrono::duration_cast<chrono::seconds>(render_end - render_start);
+    auto total_time = chrono::duration_cast<chrono::seconds>(render_end - init);
+    clog << "Initialization time: " << init_time.count() << " seconds" << endl;
+    clog << "Render time: " << render_time.count() << " seconds" << endl;
+    clog << "Total time: " << total_time.count() << " seconds" << endl;
 }

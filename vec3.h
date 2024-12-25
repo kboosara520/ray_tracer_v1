@@ -32,7 +32,8 @@ class Vec3 {
     static Vec3 random();
     static Vec3 random(double min, double max);
     static Vec3 random_unit_vector();
-    static Vec3 random_on_hemisphere(const Vec3 &normal);
+    // static Vec3 random_on_hemisphere(const Vec3 &normal);
+    static Vec3 random_in_unit_disk();
 };
 
 using Point3 = Vec3;
