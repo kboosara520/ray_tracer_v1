@@ -1,5 +1,6 @@
+.DS_Store/
 .vscode/
-*.o
+*.o 
 a.out
 *.ppm
 log.txt
