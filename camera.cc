@@ -1,6 +1,6 @@
 #include "camera.h"
 
-Camera::Camera(CameraInfo init_info): 
+Camera::Camera(const CameraInfo &init_info): 
     image_width{init_info.image_width}, 
     image_height{static_cast<int>(image_width / init_info.aspect_ratio)}, 
     samples_per_pixel{init_info.samples_per_pixel},

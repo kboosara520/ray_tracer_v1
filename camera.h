@@ -41,7 +41,7 @@ class Camera {
     Point3 defocus_disk_sample() const;
     static Vec3 sample_square() ;
   public:
-    Camera(CameraInfo init_info);
+    Camera(const CameraInfo &init_info);
     void render(const World &world);
 };
 

@@ -47,9 +47,11 @@ int main() {
     }
 
     auto material1 = make_shared<Dielectric>(1.5);
+    auto inside_bubble = make_shared<Dielectric>(1.0 / 1.5);
     world.add(make_unique<Sphere>(Point3{0, 1, 0}, 1.0, material1));
+    world.add(make_unique<Sphere>(Point3{0, 1, 0}, 0.9, inside_bubble));
 
-    auto material2 = make_shared<Lambertian>(Color{0.4, 0.2, 0.1});
+    auto material2 = make_shared<Lambertian>(Color{0.294, 0.2, 0.509});
     world.add(make_unique<Sphere>(Point3{-4, 1, 0}, 1.0, material2));
 
     auto material3 = make_shared<Metal>(Color{0.7, 0.6, 0.5}, 0.0);
@@ -57,15 +59,15 @@ int main() {
 
     const int IMAGE_WIDTH = 1280;
     const double ASPECT_RATIO = 16.0 / 9.0;
-    int samples_per_pixel = 500;
-    double defocus_angle = 0.6;
-    double focus_dist = 10;
-    Vec3 look_from{13, 2, 3};
-    Vec3 look_at{0, 0, 0};
-    Vec3 v_up{0, 1, 0};
-    double v_fov = 20;
+    const int samples_per_pixel = 500;
+    const double defocus_angle = 0.6;
+    const double focus_dist = 10;
+    const Vec3 look_from{13, 2, 3};
+    const Vec3 look_at{0, 0, 0};
+    const Vec3 v_up{0, 1, 0};
+    const double v_fov = 20;
 
-    CameraInfo init_info{
+    const CameraInfo init_info{
         IMAGE_WIDTH, ASPECT_RATIO, 
         samples_per_pixel, 
         defocus_angle, 
