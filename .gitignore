@@ -2,6 +2,5 @@
 .vscode/
 *.o 
 a.out
-*.ppm
 log.txt
 images/
