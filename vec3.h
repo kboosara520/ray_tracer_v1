@@ -27,7 +27,7 @@ class Vec3 {
     Vec3 &operator/=(double d);
     double length() const;
     double length_squared() const;
-    Vec3 unit_vector() const;
+    Vec3 normalize() const;
     bool near_zero() const;
     static Vec3 random();
     static Vec3 random(double min, double max);

@@ -13,7 +13,7 @@ $(EXEC): $(OBJ)
 	$(COMPILER) $(FLAGS) $(OBJ) -o $(EXEC)
 
 run: $(EXEC)
-	./$(EXEC) > $(IMAGE) 2> $(LOG)
+	./$(EXEC) > $(IMAGE)
 	open $(IMAGE)
 
 checkLeaks: $(EXEC)

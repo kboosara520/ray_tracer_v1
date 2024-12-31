@@ -64,7 +64,7 @@ double Vec3::length_squared() const {
     return data[0] * data[0] + data[1] * data[1] + data[2] * data[2];
 }
 
-Vec3 Vec3::unit_vector() const {
+Vec3 Vec3::normalize() const {
     return *this / length();
 }
 

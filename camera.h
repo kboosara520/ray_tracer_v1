@@ -23,7 +23,7 @@ struct CameraInfo {
 };
 
 class Camera {
-    int max_dept = 50;
+    int max_dept = 10;
     int image_width;
     int image_height;
     int samples_per_pixel;

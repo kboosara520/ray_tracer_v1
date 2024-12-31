@@ -7,8 +7,8 @@ Camera::Camera(const CameraInfo &init_info):
     defocus_angle{init_info.defocus_angle},
     focus_dist{init_info.focus_dist},
     camera_center{init_info.look_from},
-    w{(init_info.look_from - init_info.look_at).unit_vector()},
-    u{(cross(init_info.v_up, w)).unit_vector()},
+    w{(init_info.look_from - init_info.look_at).normalize()},
+    u{(cross(init_info.v_up, w)).normalize()},
     v{cross(w, u)}
     {
     image_height = (image_height < 1) ? 1 : image_height;
@@ -37,7 +37,7 @@ Camera::Camera(const CameraInfo &init_info):
 void Camera::render(const World &world) {
     cout << "P3" << endl << image_width << ' ' << image_height << endl << "255" << endl;
     for (int j = 0; j < image_height; ++j) {
-        clog << "At line: " << j << endl;
+        clog << "At line: " << j + 1 << " out of " << image_height << endl;
         for (int i = 0; i < image_width; ++i) {
             Vec3 total_c = Vec3{0, 0, 0};
             for (int k = 0; k < samples_per_pixel; ++k) {
@@ -60,7 +60,7 @@ Color Camera::ray_color(const Ray &r, const World &world, const int max_dept) {
         }
         return Color{0, 0, 0};
     }
-    Vec3 unit_dir = r.getDirection().unit_vector();
+    Vec3 unit_dir = r.getDirection().normalize();
     double a = 0.5 * (unit_dir.y() + 1);
     return (1.0 - a) * Color{1.0, 1.0, 1.0} + a * Color{0.5, 0.7, 1.0};
 }

@@ -5,7 +5,7 @@ Dielectric::Dielectric(double refraction_index): refraction_index{refraction_ind
 bool Dielectric::scatter(const Ray &in, const hit_record &hrec, Color &attenuation, Ray &scattered) const {
     attenuation = Color{1, 1, 1};
     double ref_index = hrec.front_face ? (1 / refraction_index) : refraction_index;
-    Vec3 unit_direction = in.getDirection().unit_vector();
+    Vec3 unit_direction = in.getDirection().normalize();
     double cos_theta = fmin(dot(-unit_direction, hrec.normal), 1);
     Vec3 refracted;
     double sin_theta = sqrt(1 - cos_theta * cos_theta);
